@@ -11,6 +11,8 @@ const httpServer = http.createServer((req, res) => {
   res.end("Socket.IO server");
 });
 
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
+
 const io = new Server(httpServer, {
   cors: {
     origin: [
