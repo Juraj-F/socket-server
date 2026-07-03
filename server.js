@@ -11,15 +11,29 @@ const httpServer = http.createServer((req, res) => {
   res.end("Socket.IO server");
 });
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 console.log("CLIENT_URL:", process.env.CLIENT_URL);
+
+console.log("Allowed origins:", allowedOrigins);
+
 
 const io = new Server(httpServer, {
   cors: {
-    origin: [
-      "http://localhost:3001",
-      "http://localhost:3000",
-      process.env.CLIENT_URL
-    ],
+    origin(origin, callback) {
+      console.log("Incoming origin:", origin);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("Blocked origin:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   },
 });
@@ -37,3 +51,9 @@ const PORT = process.env.PORT || 4000;
 httpServer.listen(PORT, () => {
   console.log(`Socket.IO server running on ${PORT}`);
 });
+
+
+
+
+
+
