@@ -1,7 +1,15 @@
 import http from "http";
 import { Server } from "socket.io";
 
-const httpServer = http.createServer();
+const httpServer = http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ status: "ok" }));
+  }
+
+  res.writeHead(200);
+  res.end("Socket.IO server");
+});
 
 const io = new Server(httpServer, {
   cors: {
